@@ -1,4 +1,6 @@
 numpy
-
+python-dotenv
+pymongo
+pandas
 
 -e .  # edicatore

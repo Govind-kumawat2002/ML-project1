@@ -15,9 +15,9 @@ def get_requirements()->list[str]:
 
 
 setup(name='insurance',
-      version='0.0.1', # every time when you will release your next time your project u wil have to change the version.
+      version='0.0.2', # every time when you will release your next time your project u wil have to change the version.
       description='insurance premium prediction ML project.',
-      author='Govind kumawat',
+      author='Govind',
       author_email='kumawatritik54@gmail.com',    # mail must be associated with git
       packages=find_packages(),     # it will find all the packages from your project.
       install_reqires =get_requirements()  # varaible assigned by itself. to give the idea about dependencies.

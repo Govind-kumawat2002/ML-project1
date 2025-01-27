@@ -1,18 +1,17 @@
 from source_code.logger import logging
 from source_code.exception import InsuranceException
-import sys
+import sys ,os 
+from source_code.entity import config_entity
+from source_code.dbconfig import connect_to_mogodb
+from source_code.utils import is_mongoconnected
+from source_code.components.data_ingestion import DataIngestion
 
-# # leval mode 
-# logging.info("hello this is Govind ")
-# logging.debug("hello this is Govind ")
-# logging.warning("hello this is Govind ")
-# logging.error("hello this is Govind ")
-# logging.critical("hello this is Govind ")
+traning_pipeline_obj=config_entity.TraningPipelineconfig()
 
-# try:
-#     10/0
-# except Exception as e :
+dataingestion_config_obj=config_entity.Datainegestincongif(trainig_pipeline_config=traning_pipeline_obj)
 
-#     obj=InsuranceException(error_message=e,error_detail=sys)
-#     logging.warning(obj.error_message)
-#     # print(obj.error_message)
+mongo_connections=connect_to_mogodb(mogodb_string=dataingestion_config_obj.mongodb_string)
+is_mongoconnected(mongo_connections)
+obj=DataIngestion(dataingestion_config_obj)
+obj.loading_dataset()
+

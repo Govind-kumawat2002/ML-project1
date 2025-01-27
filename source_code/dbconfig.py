@@ -7,15 +7,9 @@ import os,sys
 import pandas as pd
 from pymongo import MongoClient
 load_dotenv()
-mysql_user = os.getenv('mysql_user')
-mysql_password = os.getenv('mysql_user_pass')
-mysql_database= os.getenv('mysql_database')
-# print(mysql_user,mysql_password,mysql_database)
-mogodb_string=os.getenv("mogodb_string")
-mogo_db_name=os.getenv('mogo_db_name')
-mogo_collection_name=os.getenv('mogo_collection_name')
 
-def connect_to_mogodb():
+
+def connect_to_mogodb(mogodb_string:str):
     try:
         client =MongoClient(mogodb_string)
         print("succesfully cooneted to mongodb")
@@ -31,7 +25,7 @@ def connect_to_mogodb():
         return None
 
 
-def connect_to_mysql():
+def connect_to_mysql(host:str,user:str,password:str,database:str):
     try:
         # Connect to the MySQL server
         connection = mysql.connector.connect(

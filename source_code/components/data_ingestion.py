@@ -27,13 +27,15 @@ class DataIngestion:
         """
         try:
             mongoconnection =connect_to_mogodb(mogodb_string=self.dataingestionconfig_obj.mongodb_string)
+            logging.info("connected with mongo db")
             # mysqlconnection=connect_to_mysql(database=self.dataingestionconfig_obj.mysql_database,
             #                                  user=self.dataingestionconfig_obj.mysql_user,
             #                                  password=self.dataingestionconfig_obj.mysql_password)
             mongodb_database =mongoconnection[self.dataingestionconfig_obj.mongo_db_name]
         
             mongo_connection_nane =mongodb_database[self.dataingestionconfig_obj.mongo_collection_name]
-            for documents in mongo_connection_nane.find():
-                print(documents,"\n")
+            mongo_documents = mongo_connection_nane.find()
+            logging.info("succssfully loaded data from mongodb atlas")
+            
         except Exception as e:
             raise InsuranceException(e,sys)

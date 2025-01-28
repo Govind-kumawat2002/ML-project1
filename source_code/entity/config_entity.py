@@ -26,12 +26,17 @@ class Datainegestincongif:
             logging.info("intialiazing dataingestionconfig variable")
             self.dataingestion_dir = os.path.join(trainig_pipeline_config.artfact_dir,"data ingestion")
             self.dataset_path= os.path.join(self.dataingestion_dir,"Dataset")
+            self.train_file_path = os.path.join(self.dataingestion_dir,"train_file_path")
             self.mysql_user = os.getenv('mysql_user')
             self.mysql_password = os.getenv('mysql_user_pass')
             self.mysql_database= os.getenv('mysql_database')
             self.mongodb_string=os.getenv("mogodb_string")
             self.mongo_db_name=os.getenv('mogo_db_name')
             self.mongo_collection_name=os.getenv('mogo_collection_name')
+            self.test_size = 0.2
+            self.dataset_file_name = "insurance.csv"
+            self.train_dataset_file_name="train.csv"
+            self.test_dataset_file_name = "test.csv"
 
 
             

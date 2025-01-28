@@ -12,6 +12,12 @@ dataingestion_config_obj=config_entity.Datainegestincongif(trainig_pipeline_conf
 
 mongo_connections=connect_to_mogodb(mogodb_string=dataingestion_config_obj.mongodb_string)
 is_mongoconnected(mongo_connections)
-obj=DataIngestion(dataingestion_config_obj)
-obj.loading_dataset()
+DataIngestion_obj=DataIngestion(dataingestion_config_obj)
+loading_dataset_artifact_value=DataIngestion_obj.loading_dataset()
+
+print(loading_dataset_artifact_value.Dataset_file_path)
+print(loading_dataset_artifact_value.Test_file_path)
+print(loading_dataset_artifact_value.Train_file_path)
+
+
 

@@ -29,10 +29,10 @@ def connect_to_mysql(host:str,user:str,password:str,database:str):
     try:
         # Connect to the MySQL server
         connection = mysql.connector.connect(
-            host='localhost',       # Replace with your host, e.g., '127.0.0.1'
-            user='root',            # Replace with your MySQL username
-            password='1234',        # Replace with your MySQL password
-            database='mlproject_db', # Replace with your database name
+            host='13.53.42.161',       # Replace with your host, e.g., '127.0.0.1'
+            user='Admin',            # Replace with your MySQL username
+            password='password123!',        # Replace with your MySQL password
+            database='room', # Replace with your database name
             allow_local_infile=True  # Enable loading local files
         )
         logging.info("connecting to with database..")

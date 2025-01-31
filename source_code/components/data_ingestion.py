@@ -29,30 +29,21 @@ class DataIngestion:
         """this function is used to load the dataset from the database, like (mysql ,mongodb). and saved the data in local dir 
         """
         try:
-            sql_connection=connect_to_mysql(host=self.dataingestionconfig_obj.host,user=self.dataingestionconfig_obj.mysql_user,password=self.dataingestionconfig_obj.mysql_password,database=self.dataingestionconfig_obj.mysql_database)
+            sql_connection=connect_to_mysql()
 
 
             logging.info("connect with mysql ")
 
             cursor =sql_connection.cursor()
-            cursor.execute("SELECT * FROM insurance_data")
-            df=pd.DataFrame(cursor.fetchall())
+            cursor.execute("SELECT * FROM insurance_data_sql")
+            df=pd.DataFrame(cursor.fetchall(),columns=[desc[0] for desc in cursor.description])
+
+            # print("sql_Data",df)
 
             logging.info("succssfully loaded data from mysql data base ")
 
 
 
-
-
-            # logging.info('spliting the data into train and test data')
-            # train_df,test_df=train_test_split(df,test_size=self.dataingestionconfig_obj.test_size,random_state=42)
-
-
-
-            # print(df.info())
-            # print("hello hii ")
-            # for row in rows:
-            #     print(row)
 
 
 
@@ -75,15 +66,18 @@ class DataIngestion:
 
             logging.info("succssfully drop the _id coloum form dataset ")
             documents.drop('_id',axis=1,inplace=True)
+            df.drop('id',axis=1,inplace=True)
 
 
-            infomation_of_data=documents.info()
-            logging.info(f"infomation of dataset {infomation_of_data}")
+            # print("this information is mongo db dataset",documents.info())
+            logging.info(f"infomation of dataset ")
+            # print("mongo db data",documents)
 
 
-            shape_of_data=documents.shape
-            logging.info(f"shape of the data{shape_of_data}")
-            logging.info('replacing na value with np.nan')
+            # shape_of_data=documents.info()
+            # print("the shape of mongo db data ",shape_of_data)
+            # logging.info(f"shape of the data{shape_of_data}")
+            # logging.info('replacing na value with np.nan')
 
 
             # documents.replace(to_replace='na',value=np.NAN,inplace=True)
@@ -96,7 +90,22 @@ class DataIngestion:
             # to split the data
 
 
-            merge_dataset=pd.concat([df,documents])
+            # merge_dataset=pd.concat([df,documents])
+            # merge_dataset = pd.merge(df, documents, how="inner")
+            merge_dataset=pd.concat([df, documents], ignore_index=True)
+            # print(merge_dataset)
+            # merge_dataset.drop('_id',axis=1,inplace=True)
+            # print(merge_dataset)
+
+
+
+            # print("total dataset shape ",merge_dataset.shape)
+            # print("sql dataset shape",df.info())
+            # print("mongo dataset shape",documents.shape)
+            # print(documents.info)
+
+
+
 
             # documents = documents+df
 
@@ -106,34 +115,50 @@ class DataIngestion:
             # to store training data & testing data
             logging.info('storing the training and test file.')
             # training_data_file_path = os.path.dirname(self.dataingestionconfig_obj.dataingestion_dir)
-            os.makedirs(self.dataingestionconfig_obj.dataingestion_dir, exist_ok=True) 
+            
+            # create the dir for dataingestion 
+            os.makedirs(self.dataingestionconfig_obj.dataingestion_dir, exist_ok=True)    
+
+
+
+
             # os.join.path(self.dataingestionconfig_obj.dataingestion_dir)
 
+
+            ###  create the dir for dataset 
             os.makedirs(self.dataingestionconfig_obj.dataset_path,exist_ok = True)
-            
+
+
+            ### join the path dataingestion and dataset dir 
             dataset_file_path=os.path.join(self.dataingestionconfig_obj.dataingestion_dir,self.dataingestionconfig_obj.dataset_file_name)
             
 
-            os.makedirs(self.dataingestionconfig_obj.dataset_path,exist_ok = True)
-            # dataset_path =
-            total_train_file_path = os.path.join(self.dataingestionconfig_obj.dataset_path,self.dataingestionconfig_obj.total_tarin_dataset_file_name)
-            total_test_file_path = os.path.join(self.dataingestionconfig_obj.dataset_path,self.dataingestionconfig_obj.total_test_dataset_file_name)
+            # os.makedirs(self.dataingestionconfig_obj.dataset_path,exist_ok = True)
+            # # dataset_path =
 
-            documents.to_csv(dataset_file_path,index=False)
+
+
+            train_file_path = os.path.join(self.dataingestionconfig_obj.dataset_path,self.dataingestionconfig_obj.train_dataset_file_name)
+
+
+
+            test_file_path = os.path.join(self.dataingestionconfig_obj.dataset_path,self.dataingestionconfig_obj.test_dataset_file_name)
+
+            merge_dataset.to_csv(dataset_file_path,index=False)
             logging.info(f"successfully saved dataset data {dataset_file_path}")
 
 
-            train_df.to_csv(total_train_file_path,index = False)
-            logging.info(f"successfully saved train data {total_train_file_path}")
+            train_df.to_csv(train_file_path,index = False)
+            logging.info(f"successfully saved train data {train_file_path}")
 
-            test_df.to_csv(total_test_file_path,index = False)
-            logging.info(f"successfully saved test data {total_test_file_path}")
-
-
+            test_df.to_csv(test_file_path,index = False)
+            logging.info(f"successfully saved test data {test_file_path}")
 
 
 
-            DataIngestion_artfact=artifact_entity.Dataingenstionartifact(dataset_file_path,total_train_file_path,total_test_file_path)
+
+
+            DataIngestion_artfact=artifact_entity.Dataingenstionartifact(dataset_file_path=dataset_file_path,train_file_path=train_file_path,test_file_path=test_file_path)
             return DataIngestion_artfact
 
  

@@ -7,7 +7,7 @@ from datetime import datetime
 # from artifact_entity import Dataingenstionartifact
 import pandas as pd 
 # import artifact_entity
-from source_code.entity.artifact_entity import Dataclean
+# from source_code.entity.artifact_entity im
 
 
 
@@ -46,13 +46,13 @@ class Datainegestincongif:
             self.mongo_collection_name=os.getenv('mogo_collection_name')
             self.test_size = 0.2
             self.dataset_file_name = "insurance.csv"
-            self.mongo_train_dataset_file_name="train.csv"
-            self.mongo_test_dataset_file_name = "test.csv"
-            self.mysql_train_dataset_file_name = 'train.csv'
-            self.mysql_test_dataset_file_name= 'test.csv'
+            self.train_dataset_file_name="train.csv"
+            self.test_dataset_file_name = "test.csv"
+            # self.mysql_train_dataset_file_name = 'train.csv'
+            # self.mysql_test_dataset_file_name= 'test.csv'
 
-            self.total_tarin_dataset_file_name = self.mysql_train_dataset_file_name+self.mongo_train_dataset_file_name
-            self.total_test_dataset_file_name = self.mongo_test_dataset_file_name+self.mysql_test_dataset_file_name
+            # self.total_tarin_dataset_file_name = self.mysql_train_dataset_file_name+self.mongo_train_dataset_file_name
+            # self.total_test_dataset_file_name = self.mongo_test_dataset_file_name+self.mysql_test_dataset_file_name
 
             # self.mysql_database = os.getenv('mysql_database')
             # self.mysql_password = 
@@ -64,6 +64,36 @@ class Datainegestincongif:
         except Exception as e:
             
             raise InsuranceException(e,sys)
+        
+
+
+
+        
+
+        
+class Datavalidationconfig:
+    def __init__(self,trainig_pipeline_config:TraningPipelineconfig):
+        try:
+            logging.info("intialiazing datavalidation  variable")
+            self.datavalidation_dir = os.path.join(trainig_pipeline_config.artfact_dir,"data validation")
+            # self.valid_data_validation_dir = os.path.join(self.datavalidation_dir,"valid validation data")
+            # self.invalid_data_validation_dir=os.path.join(self.datavalidation_dir,"invalid validation data")
+            self.valid_data_file_name = "valid_Data.csv"
+            self.invalid_data_file_name = "invalid_Data.csv"
+
+             
+        except Exception as e :
+            raise InsuranceException(e ,sys)
+        
+
+
+
+
+
+
+
+
+
         
 class Datacleaningconfig:
     def __init__(self,trainig_pipeline_config:TraningPipelineconfig):
@@ -82,8 +112,8 @@ class Datacleaningconfig:
             self.mysql_train_dataset_file_name = 'train.csv'
             self.mysql_test_dataset_file_name= 'test.csv'
 
-            self.total_tarin_dataset_file_name = self.mysql_train_dataset_file_name+self.mongo_train_dataset_file_name
-            self.total_test_dataset_file_name = self.mongo_test_dataset_file_name+self.mysql_test_dataset_file_name
+            # self.total_tarin_dataset_file_name = self.mysql_train_dataset_file_name+self.mongo_train_dataset_file_name
+            # self.total_test_dataset_file_name = self.mongo_test_dataset_file_name+self.mysql_test_dataset_file_name
 
 
         except Exception as e:
@@ -98,13 +128,3 @@ class DataTranformationconfig:
             pass
         except Exception as e:
             raise InsuranceException(e , sys)
-        
-class Datavalidationconfig:
-    def __init__(self,trainig_pipeline_config:TraningPipelineconfig):
-        try:
-            logging.info("intialiazing datavalidation  variable")
-            self.datavalidation_dir = os.path.join(trainig_pipeline_config.artfact_dir,"data validation")
-
-             
-        except Exception as e :
-            raise InsuranceException(e ,sys)

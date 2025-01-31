@@ -111,22 +111,35 @@
 #     print("Connection closed.")
 
 
-from source_code.dbconfig import connect_to_mogodb,connect_to_mysql
+# from source_code.dbconfig import connect_to_mogodb,connect_to_mysql
 
 
-sql_connection=connect_to_mysql(host='16.171.3.98',user="Admin",password='Pass@12345',database='room')
+# sql_connection=connect_to_mysql(host='16.171.3.98',user="Admin",password='Pass@12345',database='room')
 
-if sql_connection.is_connected():
-    print("connected")
-else:
-    print("not connected")
+# if sql_connection.is_connected():
+#     print("connected")
+# else:
+#     print("not connected")
 
 
-cursor =sql_connection.cursor()
-cursor.execute("SELECT * FROM insurance_data")
-rows=cursor.fetchall()
-for x in rows:
-    print(x)
+# cursor =sql_connection.cursor()
+# cursor.execute("SELECT * FROM insurance_data")
+# rows=cursor.fetchall()
+# for x in rows:
+#     print(x)
+
+
+# import mysql.connector
+# connection =mysql.connector.connect( host="51.20.191.241",
+#             user="Admin",
+#             password="Pass@12345",
+#             database="room")
+# if connection.is_connected():
+#     print("connection")
+# else:
+#     print("not connected")
+
+
 # logging.info("connect with mysql ")
 
 # cursor =sql_connection.cursor()
@@ -134,3 +147,124 @@ for x in rows:
 # rows = cursor.fetchall()
 # for row in rows:
 #         print(row)
+
+
+
+# import pandas as pd
+# import mysql.connector
+# from mysql.connector import Error
+
+# # Function to insert CSV data into MySQL
+# def insert_csv_to_mysql(csv_file, host, user, password, database, table_name):
+#     try:
+#         # Read CSV data into a Pandas DataFrame
+#         df = pd.read_csv(csv_file)
+
+#         # Connect to the MySQL database
+#         connection = mysql.connector.connect(
+#           host="51.20.191.241 ",
+# user="root",
+# password="Password123!",
+# database="room"
+#                     )
+        
+
+#         if connection.is_connected():
+#             print(f"Connected to MySQL database {database}")
+
+#             # Create a cursor object
+#             cursor = connection.cursor()
+
+#             # Iterate over the DataFrame and insert data into MySQL
+#             for index, row in df.iterrows():
+#                 # Create an INSERT query
+#                 insert_query = f"INSERT INTO {table_name} ({', '.join(df.columns)}) VALUES ({', '.join(['%s'] * len(df.columns))})"
+                
+#                 # Insert the row data into the table
+#                 cursor.execute(insert_query, tuple(row))
+                
+#             # Commit the transaction
+#             connection.commit()
+#             print(f"Successfully inserted {len(df)} rows into {table_name}.")
+
+#     except Error as e:
+#         print(f"Error: {e}")
+#     finally:
+#         # Close the cursor and connection
+#         if connection.is_connected():
+#             cursor.close()
+#             connection.close()
+#             print("MySQL connection is closed.")
+
+# # Define your CSV file and MySQL details
+# csv_file = 'E:\ML-project1\split_part_1.csv'  # Path to your CSV file
+# host="51.20.191.241 ",
+# user="root",
+# password="Password123!",
+# database="room"
+# table_name = 'insurance_data'
+
+
+# # Call the function to insert CSV data to MySQL
+# insert_csv_to_mysql(csv_file=csv_file, host=host, user=user, password=password, database=database, table_name=table_name)
+
+
+
+import pandas as pd
+import mysql.connector
+from mysql.connector import Error
+
+# Function to insert CSV data into MySQL
+def insert_csv_to_mysql(csv_file, host, user, password, database, table_name):
+    try:
+        # Read CSV data into a Pandas DataFrame
+        df = pd.read_csv(csv_file)
+
+        # Connect to the MySQL database
+        connection = mysql.connector.connect(
+            host=host,
+            user=user,
+            password=password,
+            database=database
+        )
+
+        if connection.is_connected():
+            print(f"Connected to MySQL database {database}")
+
+            # Create a cursor object
+            cursor = connection.cursor()
+
+            # Iterate over the DataFrame and insert data into MySQL
+            for index, row in df.iterrows():
+                # Replace NaN values with None for MySQL NULL handling
+                row = tuple(None if pd.isna(x) else x for x in row)
+
+                # Create an INSERT query
+                insert_query = f"INSERT INTO {table_name} ({', '.join(df.columns)}) VALUES ({', '.join(['%s'] * len(df.columns))})"
+                
+                # Insert the row data into the table
+                cursor.execute(insert_query, row)
+                
+            # Commit the transaction
+            connection.commit()
+            print(f"Successfully inserted {len(df)} rows into {table_name}.")
+
+    except Error as e:
+        print(f"Error: {e}")
+    finally:
+        # Close the cursor and connection
+        if 'connection' in locals() and connection.is_connected():
+            cursor.close()
+            connection.close()
+            print("MySQL connection is closed.")
+
+# Define your CSV file and MySQL details
+csv_file = r"E:\ML-project1\split_part_1.csv"  # Use raw string or double backslashes
+host = "51.20.191.241"  # Removed extra space
+user = "Admin"
+password = "Pass@12345"
+database = "room"
+table_name = "insurance_data_sql"
+
+# Call the function to insert CSV data to MySQL
+insert_csv_to_mysql(csv_file=csv_file, host=host, user=user, password=password, database=database, table_name=table_name)

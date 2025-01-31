@@ -3,15 +3,16 @@
 from dataclasses import dataclass
 @dataclass
 class Dataingenstionartifact:
-    Dataset_file_path:str
-    total_Train_file_path:str
-    total_Test_file_path:str
+    dataset_file_path:str
+    train_file_path:str
+    test_file_path:str
 @dataclass
-class Dataclean:
+class Datacleanartifact:
     clean_dataset_file_path:str
     total_train_file_path:str
     total_test_file_path:str
 
 @dataclass
-class Datavalidation:
-    Dataset_file_path:str
+class Datavalidation_artifact:
+    valid_Dataset_file_path:str
+    invalid_Dataset_file_path:str

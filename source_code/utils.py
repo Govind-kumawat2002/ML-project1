@@ -8,3 +8,8 @@ def is_mongoconnected(mongo_connections):
         print("connected ")
     else:
         print("not connected")
+def is_mysqlconnected(mysql_connections):
+    if mysql_connections is not None:
+        print("connected")
+    else:
+        print("not connected ")

@@ -29,14 +29,50 @@ class DataIngestion:
         """this function is used to load the dataset from the database, like (mysql ,mongodb). and saved the data in local dir 
         """
         try:
+            sql_connection=connect_to_mysql(host=self.dataingestionconfig_obj.host,user=self.dataingestionconfig_obj.mysql_user,password=self.dataingestionconfig_obj.mysql_password,database=self.dataingestionconfig_obj.mysql_database)
+
+
+            logging.info("connect with mysql ")
+
+            cursor =sql_connection.cursor()
+            cursor.execute("SELECT * FROM insurance_data")
+            df=pd.DataFrame(cursor.fetchall())
+
+            logging.info("succssfully loaded data from mysql data base ")
+
+
+
+
+
+            # logging.info('spliting the data into train and test data')
+            # train_df,test_df=train_test_split(df,test_size=self.dataingestionconfig_obj.test_size,random_state=42)
+
+
+
+            # print(df.info())
+            # print("hello hii ")
+            # for row in rows:
+            #     print(row)
+
+
+
+
+
+
             mongoconnection =connect_to_mogodb(mogodb_string=self.dataingestionconfig_obj.mongodb_string)
             logging.info("connected with mongo db")
+
+
             mongodb_database =mongoconnection[self.dataingestionconfig_obj.mongo_db_name]
         
             mongo_connection_nane =mongodb_database[self.dataingestionconfig_obj.mongo_collection_name]
+
+
             mongo_documents = mongo_connection_nane.find()
+
             logging.info("succssfully loaded data from mongodb atlas")
             documents=pd.DataFrame(list(mongo_documents))
+
             logging.info("succssfully drop the _id coloum form dataset ")
             documents.drop('_id',axis=1,inplace=True)
 
@@ -59,38 +95,45 @@ class DataIngestion:
             # documents.to_csv(path_or_buf=self.data_ingestion_dir.feature_store_file_path,index=False,header=True)
             # to split the data
 
+
+            merge_dataset=pd.concat([df,documents])
+
+            # documents = documents+df
+
             logging.info('spliting the data into train and test data')
-            train_df,test_df = train_test_split(documents,test_size=self.dataingestionconfig_obj.test_size,random_state=42)
+            train_df,test_df = train_test_split(merge_dataset,test_size=self.dataingestionconfig_obj.test_size,random_state=42)
 
             # to store training data & testing data
             logging.info('storing the training and test file.')
             # training_data_file_path = os.path.dirname(self.dataingestionconfig_obj.dataingestion_dir)
             os.makedirs(self.dataingestionconfig_obj.dataingestion_dir, exist_ok=True) 
             # os.join.path(self.dataingestionconfig_obj.dataingestion_dir)
+
             os.makedirs(self.dataingestionconfig_obj.dataset_path,exist_ok = True)
+            
             dataset_file_path=os.path.join(self.dataingestionconfig_obj.dataingestion_dir,self.dataingestionconfig_obj.dataset_file_name)
             
 
             os.makedirs(self.dataingestionconfig_obj.dataset_path,exist_ok = True)
             # dataset_path =
-            train_file_path = os.path.join(self.dataingestionconfig_obj.dataset_path,self.dataingestionconfig_obj.train_dataset_file_name)
-            test_file_path = os.path.join(self.dataingestionconfig_obj.dataset_path,self.dataingestionconfig_obj.test_dataset_file_name)
+            total_train_file_path = os.path.join(self.dataingestionconfig_obj.dataset_path,self.dataingestionconfig_obj.total_tarin_dataset_file_name)
+            total_test_file_path = os.path.join(self.dataingestionconfig_obj.dataset_path,self.dataingestionconfig_obj.total_test_dataset_file_name)
 
             documents.to_csv(dataset_file_path,index=False)
             logging.info(f"successfully saved dataset data {dataset_file_path}")
 
 
-            train_df.to_csv(train_file_path,index = False)
-            logging.info(f"successfully saved train data {train_file_path}")
+            train_df.to_csv(total_train_file_path,index = False)
+            logging.info(f"successfully saved train data {total_train_file_path}")
 
-            test_df.to_csv(test_file_path,index = False)
-            logging.info(f"successfully saved test data {test_file_path}")
-
-
+            test_df.to_csv(total_test_file_path,index = False)
+            logging.info(f"successfully saved test data {total_test_file_path}")
 
 
 
-            DataIngestion_artfact=artifact_entity.Dataingenstionartifact(dataset_file_path,train_file_path,test_file_path)
+
+
+            DataIngestion_artfact=artifact_entity.Dataingenstionartifact(dataset_file_path,total_train_file_path,total_test_file_path)
             return DataIngestion_artfact
 
  

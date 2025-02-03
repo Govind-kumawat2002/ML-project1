@@ -67,6 +67,8 @@ class DataIngestion:
             logging.info("succssfully drop the _id coloum form dataset ")
             documents.drop('_id',axis=1,inplace=True)
             df.drop('id',axis=1,inplace=True)
+            # print(documents)
+            # print(df)
 
 
             # print("this information is mongo db dataset",documents.info())
@@ -103,6 +105,7 @@ class DataIngestion:
             # print("sql dataset shape",df.info())
             # print("mongo dataset shape",documents.shape)
             # print(documents.info)
+            # print(merge_dataset.info())
 
 
 

@@ -122,15 +122,15 @@ class Datatvalidation:
     # Define validation functions
     @staticmethod
     def validate_sex(value):
-        return value in ["male", "female"]
+        return value in ["female", "male"]
 
     @staticmethod
     def validate_bmi(value):
-        return isinstance(value, (int, float)) and value > 0
+        return isinstance(value, (int, float)) and value > 0 and value <=41
 
     @staticmethod
     def validate_children(value):
-        return isinstance(value, int) and value >= 0
+        return isinstance(value, int) and value >= 0 and value<=5
 
     @staticmethod
     def validate_smoker(value):
@@ -143,6 +143,9 @@ class Datatvalidation:
     @staticmethod
     def validate_charges(value):
         return isinstance(value, (int, float)) and value >= 0
+    @staticmethod
+    def validation_age(value):
+        return isinstance(value,int ) and value >=0 and value <=100
 
     # Method to check if data is valid
     def checkthedata_valid(self):
@@ -153,7 +156,7 @@ class Datatvalidation:
 
             # Apply validation checks for all rows
                 invalid_rows = df[
-                    (~df["age"].apply(self.validate_sex)) |
+                    (~df["age"].apply(self.validation_age)) |
                     (~df["sex"].apply(self.validate_sex)) |
                     (~df["bmi"].apply(self.validate_bmi)) |
                     (~df["children"].apply(self.validate_children)) |

@@ -5,87 +5,59 @@ import pandas as pd
 from source_code.logger import logging
 from source_code.exception import InsuranceException
 # load dataset from dir 
-from source_code.entity import config_entity,artifact_entity
+from source_code.entity import config_entity, artifact_entity
+
 class Datacleaning:
-    def __init__(self,total_dataset_file_path:str,
-                 total_train_file_path:str,
-                  total_test_file_path:str,datacleaningconfig_obj:config_entity.Datacleaning):
-            try:
-                  
-                  self.total_dataset_file_path=total_dataset_file_path
-                  self.total_train_file_path = total_train_file_path
-                  self.total_test_file_path= total_test_file_path
-                  self.datacleaningconfig_obj=datacleaningconfig_obj
-                  
-            except Exception as e:
-                  raise InsuranceException(e ,sys)
+    def __init__(self, data_cleaning_artifact: artifact_entity.DatavalidationArtifact,
+                 data_cleaning_config: config_entity.Datacleaningconfig):
+        try:
+            self.data_cleaning_config = data_cleaning_config
+            self.data_cleaning_artifact = data_cleaning_artifact
+            self.dataset = pd.read_csv(data_cleaning_artifact.valid_Dataset_file_path)
+            # print(self.dataset)
+        except Exception as e:
+            raise InsuranceException(e, sys)
+
+    def clean_data(self):
+        try:
+            df = self.dataset.copy()
+
+            """
+            Cleans a pandas DataFrame by:
+            - Removing duplicate rows
+            - Filling missing values with column mean (for numerical columns)
+            - Stripping whitespace from string columns
+            - Dropping columns with more than 50% missing values
             
-    def data_cleaning(self):
+            Returns:
+            pd.DataFrame: The cleaned DataFrame
+            """
             
-            try :
-                  """
-                  this funtion is used for data cleaning and manipulation of data"""
-      
-                  total_df=pd.read_csv(self.total_train_file_path)
-                  total_df.drop_duplicates(inplace=True)
-      
-      
-      
-                  size_of_the_data = total_df.shape
-                  logging.info(f'shape of the data {size_of_the_data}')  
-      
-      
-      
-                  # to handle the missing value
-                  # logging.info('replacing na value with np.nan')
-                  # total_df.replace(to_replace='na',value=np.NAN,inplace=True)
-      
-      
-      
-                  logging.info('replaced')    
-                  # to handle the null value 
-      
-      
-      
-      
-                  logging.info("remove the null  value from the dataset ")
-                  total_df.dropna(inplace=True) 
-                  # print(total_df)  
-      
-      
-                  os.makedirs(self.datacleaningconfig_obj.clean_dataset_file_name,exist_ok = True)
-                  clean_dataset_file_path=os.path.join(self.datacleaningconfig_obj.dataclean_dir,self.datacleaningconfig_obj.clean_dataset_file_name)
-                  os.makedirs(self.datacleaningconfig_obj.clean_dataset_path,exist_ok = True)
-                  total_train_file_path = os.path.join(self.datacleaningconfig_obj.clean_dataset_file_name,self.datacleaningconfig_obj.total_tarin_dataset_file_name)
-      
-      
-                  total_test_file_path = os.path.join(self.datacleaningconfig_obj.clean_dataset_file_name,self.datacleaningconfig_obj.total_test_dataset_file_name)
-      
-                  total_df.to_csv(clean_dataset_file_path,index=False)
-                  logging.info(f"successfully saved dataset data {clean_dataset_file_path}")
-      
-      
-                  total_df.to_csv(total_train_file_path,index = False)
-                  logging.info(f"successfully saved train data {total_train_file_path}")
-      
-                  total_df.to_csv(total_test_file_path,index = False)
-                  logging.info(f"successfully saved test data {total_test_file_path}")
-
-
-                  Dataclean_artfact=artifact_entity.Dataclean(clean_dataset_file_path,total_train_file_path,total_test_file_path)
-                  return Dataclean_artfact
-
-
-
-            except Exception as e :
-                  raise InsuranceException(e, sys)
-      
-      
-
-
+            # Remove duplicates
+            df = df.drop_duplicates()
             
+            # Drop columns with more than 50% missing values
+            threshold = len(df) * 0.5
+            df = df.dropna(thresh=threshold, axis=1)
+            
+            # Fill missing values with column mean for numerical columns
+            num_cols = df.select_dtypes(include=['number']).columns
+            df[num_cols] = df[num_cols].fillna(df[num_cols].mean())
+            
+            # Strip whitespace from string columns
+            str_cols = df.select_dtypes(include=['object']).columns
+            df[str_cols] = df[str_cols].apply(lambda x: x.str.strip() if x.dtype == "object" else x)
 
 
+            os.makedirs(self.data_cleaning_config.dataclean_dir,exist_ok=True)
+            clean_file_path=os.path.join(self.data_cleaning_config.dataclean_dir,self.data_cleaning_config.clean_dataset_file_name)
+            # os.makedirs(self.data_cleaning_config.dataclean_dir, exist_ok=True)
+            # clean_file_path = os.path.join(self.data_cleaning_config.dataclean_dir, self.data_cleaning_config.clean_dataset_file_name)
+            df.to_csv(clean_file_path, index=False)
 
+            logging.info(f"Successfully saved clean dataset at {clean_file_path}")
+            datacleaning_artifact=artifact_entity.DatacleaningArtifact(clean_file_path=clean_file_path)
       
-        
+            return datacleaning_artifact
+        except Exception as e:
+            raise InsuranceException(e, sys)

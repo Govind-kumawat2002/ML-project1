@@ -5,9 +5,10 @@ from source_code.entity import config_entity ,artifact_entity
 from source_code.dbconfig import connect_to_mogodb,connect_to_mysql
 from source_code.utils import is_mongoconnected ,is_mysqlconnected
 from source_code.components.data_ingestion import DataIngestion 
-# from source_code.components.data_cleaning import Datacleaning
+from source_code.components.data_cleaning import Datacleaning
 # from source_code.components.data_transformation import Datatransformation
 from source_code.components.data_validation import Datatvalidation
+from source_code.components.data_transformation import DataTransformation
 import pandas as pd 
 
 
@@ -24,14 +25,50 @@ dataingestionArtifact_obj =  dataingestion_obj.loading_dataset()
 
 
 data_validation_config=config_entity.Datavalidationconfig(trainig_pipeline_config=traning_pipeline_obj)
+
+
 datavalidation_object=Datatvalidation(datavalidation_obj=data_validation_config,data_ingestion_artificat=dataingestionArtifact_obj)
+data_validation_artifact=datavalidation_object.checkthedata_valid()
+# print(data_validation_artifact)
 
-# print(datavalidation_object.data_ingestion_artificat_obj.dataset_file_path)
-datavalidation_object.load_dataset_validation()
+# data_cleaning_config=config_entity.Datacleaningconfig(trainig_pipeline_config=traning_pipeline_obj)
+# data_cleaning_obj=Datacleaning(data_cleaning_artifact=data_validation_artifact,data_cleaning_config=data_cleaning_config)
+# data_cleaning_obj_path=data_cleaning_obj.clean_data()
+
+
+
+# data_transfromation_obj=DataTransformation(datatransformation_artifact=data_cleaning_obj_path)
+# data_transfromation_obj.transform_data()
+
+# data_transfromation_obj.handle_missing_values()
 
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# # Datacleaning()
+# data_cleaning_config=config_entity.Datacleaningconfig(trainig_pipeline_config=traning_pipeline_obj)
+# # print(data_cleaning_config.clean_dataset_file_name)
+# data_validation_artifact=artifact_entity.DatavalidationArtifact(valid_Dataset_file_path=d)
+# print(data_validation_artifact.valid_Dataset_file_path)
+
+
+
+# print(artifact_entity.DatavalidationArtifact.valid_Dataset_file_path)
 
 
 

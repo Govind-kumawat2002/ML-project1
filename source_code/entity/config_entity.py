@@ -103,28 +103,16 @@ class Datacleaningconfig:
 
             self.dataclean_dir = os.path.join(trainig_pipeline_config.artfact_dir,"data cleaning")
             self.clean_dataset_file_name = "clean_insurance.csv"
-            self.clean_dataset_path= os.path.join(self.dataclean_dir,"Clean Dataset")
-
-
-
-            self.mongo_train_dataset_file_name="train.csv"
-            self.mongo_test_dataset_file_name = "test.csv"
-            self.mysql_train_dataset_file_name = 'train.csv'
-            self.mysql_test_dataset_file_name= 'test.csv'
-
-            # self.total_tarin_dataset_file_name = self.mysql_train_dataset_file_name+self.mongo_train_dataset_file_name
-            # self.total_test_dataset_file_name = self.mongo_test_dataset_file_name+self.mysql_test_dataset_file_name
-
 
         except Exception as e:
             raise InsuranceException(e, sys)
         
-class DataTranformationconfig:
-    def __init__(self,trainig_pipeline_config:TraningPipelineconfig):
-        try:
-            logging.info("intialiazing datatranforamtion  variable")
-            self.cleaning_dataset = Dataclean.clean_dataset_file_path
+# class DataTranformationconfig:
+#     def __init__(self,trainig_pipeline_config:TraningPipelineconfig):
+#         try:
+#             logging.info("intialiazing datatranforamtion  variable")
+#             self.cleaning_dataset = Dataclean.clean_dataset_file_path
 
-            pass
-        except Exception as e:
-            raise InsuranceException(e , sys)
+#             pass
+#         except Exception as e:
+#             raise InsuranceException(e , sys)

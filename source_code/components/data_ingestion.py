@@ -158,8 +158,8 @@ class DataIngestion:
 
 
 
-            DataIngestion_artfact=artifact_entity.Dataingenstionartifact(dataset_file_path=dataset_file_path,train_file_path=train_file_path,test_file_path=test_file_path)
-            return DataIngestion_artfact
+            Datavalidation_artifact=artifact_entity.Dataingenstionartifact(dataset_file_path=dataset_file_path,train_file_path=train_file_path,test_file_path=test_file_path)
+            return Datavalidation_artifact
 
  
         except Exception as e:

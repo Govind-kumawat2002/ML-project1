@@ -21,3 +21,11 @@ class DatavalidationArtifact:
 @dataclass
 class DatacleaningArtifact:
     clean_file_path:str
+
+@dataclass
+class DataTransFormArtifact:
+    onehot_data_file_path:str 
+    onehot_encoder_model_path:str 
+
+    scaler_data_file_path:str 
+    scaler_model_path:str 

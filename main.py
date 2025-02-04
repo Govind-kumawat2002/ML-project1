@@ -31,10 +31,18 @@ datavalidation_object=Datatvalidation(datavalidation_obj=data_validation_config,
 data_validation_artifact=datavalidation_object.checkthedata_valid()
 # print(data_validation_artifact)
 
-# data_cleaning_config=config_entity.Datacleaningconfig(trainig_pipeline_config=traning_pipeline_obj)
-# data_cleaning_obj=Datacleaning(data_cleaning_artifact=data_validation_artifact,data_cleaning_config=data_cleaning_config)
-# data_cleaning_obj_path=data_cleaning_obj.clean_data()
+data_cleaning_config=config_entity.Datacleaningconfig(trainig_pipeline_config=traning_pipeline_obj)
+data_cleaning_obj=Datacleaning(data_cleaning_artifact=data_validation_artifact,data_cleaning_config=data_cleaning_config)
+data_cleaning_obj_path=data_cleaning_obj.clean_data()
 
+
+data_transformation_config_obj =  config_entity.DataTransFormationConfig(traininng_pipeline_config_obj=traning_pipeline_obj)
+data_transormation_obj =  DataTransformation(
+                    data_transformation_config=data_transformation_config_obj,
+                    data_cleaning_artifact=data_cleaning_obj_path
+)
+data_transormation_artifact =  data_transormation_obj.transform_initiate()
+print("Data transformation Done ✅")
 
 
 # data_transfromation_obj=DataTransformation(datatransformation_artifact=data_cleaning_obj_path)

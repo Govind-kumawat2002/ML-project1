@@ -1,166 +1,89 @@
-# import os 
-# import numpy as np 
-# import sys
-# import pandas as pd 
-# from source_code.logger import logging
-# from source_code.exception import InsuranceException
-# # load dataset from dir 
-# from source_code.entity import config_entity, artifact_entity
-# import numpy as np
-# import pandas as pd
-# from sklearn.preprocessing import StandardScaler, MinMaxScaler, OneHotEncoder, LabelEncoder
-# from sklearn.impute import SimpleImputer
-# from sklearn.decomposition import PCA
-
-# class Datatransformatio:
-#     def __init__(self,datatransfromation_artifact:artifact_entity.DatacleaningArtifact):
-#         try:
-#             self.datatransfromation_artifact=datatransfromation_artifact
-#             self.dataset=pd.read_csv(datatransfromation_artifact.clean_file_path)
-#         except Exception as e:
-#             raise InsuranceException(e,sys)
-#     def transform_data(self,df, scaling_method='standard', encode_categorical=True, impute_missing=True, apply_pca=False, n_components=2):
-#         """
-#         Transforms the given dataframe by handling missing values, encoding categorical features, scaling, and PCA.
-
-#         Parameters:
-#         - df (pd.DataFrame): The input dataframe.
-#         - scaling_method (str): 'standard' (Z-score) or 'minmax' (Min-Max scaling).
-#         - encode_categorical (bool): Whether to encode categorical variables.
-#         - impute_missing (bool): Whether to impute missing values.
-#         - apply_pca (bool): Whether to apply PCA for dimensionality reduction.
-#         - n_components (int): Number of components for PCA.
-
-#         Returns:
-#         - pd.DataFrame: Transformed dataframe.
-#         """
-
-#         df = self.dataset.copy()
-
-#         # Handle missing values
-#         if impute_missing:
-#             num_imputer = SimpleImputer(strategy='mean')  # Fill numeric columns with mean
-#             cat_imputer = SimpleImputer(strategy='most_frequent')  # Fill categorical columns with mode
-            
-#             for col in df.select_dtypes(include=['number']).columns:
-#                 df[col] = num_imputer.fit_transform(df[[col]])
-            
-#             for col in df.select_dtypes(include=['object', 'category']).columns:
-#                 df[col] = cat_imputer.fit_transform(df[[col]])
-
-#         # Encode categorical variables
-#         if encode_categorical:
-#             categorical_cols = df.select_dtypes(include=['object', 'category']).columns
-#             encoder = OneHotEncoder(drop='first', sparse=False)
-#             encoded_cols = encoder.fit_transform(df[categorical_cols])
-#             df = df.drop(columns=categorical_cols)
-#             df = pd.concat([df, pd.DataFrame(encoded_cols, columns=encoder.get_feature_names_out(categorical_cols))], axis=1)
-
-#         # Scaling
-#         scaler = StandardScaler() if scaling_method == 'standard' else MinMaxScaler()
-#         numerical_cols = df.select_dtypes(include=['number']).columns
-#         df[numerical_cols] = scaler.fit_transform(df[numerical_cols])
-
-#         # Apply PCA if needed
-#         if apply_pca:
-#             pca = PCA(n_components=n_components)
-#             df_pca = pca.fit_transform(df)
-#             df = pd.DataFrame(df_pca, columns=[f'PC{i+1}' for i in range(n_components)])
-
-#         return df
-
-#     # Example usage
-    
-
-
-#     transformed_data = transform_data(df, scaling_method='minmax', encode_categorical=True, impute_missing=True, apply_pca=False)
-#     print(transformed_data)
-import os
-import numpy as np
-import sys
-import pandas as pd
-from source_code.logger import logging
-from source_code.exception import InsuranceException
-from source_code.entity import config_entity, artifact_entity
-from sklearn.preprocessing import StandardScaler, MinMaxScaler, OneHotEncoder, LabelEncoder
-from sklearn.impute import SimpleImputer
-from sklearn.decomposition import PCA
+from source_code.logger import logging 
+from source_code.exception import InsuranceException 
+from source_code.entity import config_entity,artifact_entity
+from sklearn.preprocessing import OneHotEncoder,StandardScaler,RobustScaler 
+import  os , sys ,joblib
+import numpy as np 
+import pandas as pd 
 
 class DataTransformation:
-    def __init__(self, datatransformation_artifact: artifact_entity.DatacleaningArtifact):
-        """
-        Initializes the DataTransformation class.
-
-        :param datatransformation_artifact: Object containing paths for cleaned data.
-        """
+    def __init__(self,data_transformation_config:config_entity.DataTransFormationConfig,
+                    data_cleaning_artifact:artifact_entity.DatacleaningArtifact):
         try:
-            self.datatransformation_artifact = datatransformation_artifact
-            self.dataset = pd.read_csv(datatransformation_artifact.clean_file_path)
+            self.data_transformation_config = data_transformation_config
+            self.data_cleaning_artifact = data_cleaning_artifact
         except Exception as e:
-            raise InsuranceException(e, sys)
+            raise InsuranceException(e,sys)
 
-    def transform_data(self, scaling_method='standard', encode_categorical=True, impute_missing=True, apply_pca=False, n_components=2):
-        """
-        Transforms the dataset by handling missing values, encoding categorical features, scaling, and PCA.
 
-        Parameters:
-        - scaling_method (str): 'standard' (Z-score) or 'minmax' (Min-Max scaling).
-        - encode_categorical (bool): Whether to encode categorical variables.
-        - impute_missing (bool): Whether to impute missing values.
-        - apply_pca (bool): Whether to apply PCA for dimensionality reduction.
-        - n_components (int): Number of components for PCA.
+    def split_cat_num(self,df:pd.DataFrame)->pd.DataFrame:
+        try:
+            cat_df = df.select_dtypes(include="O")
+            num_df = df.select_dtypes(exclude="O")
+            return cat_df,num_df 
+        except Exception as e:
+            raise InsuranceException(e,sys)
 
-        Returns:
-        - pd.DataFrame: Transformed dataframe.
-        """
+    def transform_catgorical(self,cat_df: pd.DataFrame)-> tuple[pd.DataFrame, OneHotEncoder]:
+        try:
+            onehot_encoder = OneHotEncoder(drop='first')
+            transformed_data = onehot_encoder.fit_transform(cat_df)
+            df = pd.DataFrame(transformed_data.toarray(),columns=onehot_encoder.get_feature_names_out())
+            return df , onehot_encoder  
+        except Exception as e:
+            raise InsuranceException(e,sys)
 
-        df = self.dataset.copy()
-#         print(df.info())
+    def standardize_data(self,df:pd.DataFrame)-> tuple[pd.DataFrame, RobustScaler]:
+        try:
+            scaler = RobustScaler() 
+            transform_df = scaler.fit_transform(df)
+            return transform_df,scaler 
+        except Exception as e:
+            raise InsuranceException(e,sys)
 
-#         # Handle missing values
-        # if impute_missing:
-        #     num_imputer = SimpleImputer(strategy='mean')  # Fill numeric columns with mean
-        #     cat_imputer = SimpleImputer(strategy='most_frequent')  # Fill categorical columns with mode
+    def transform_initiate(self)->artifact_entity.DataTransFormArtifact:
+        try:
+            df = pd.read_csv(self.data_cleaning_artifact.clean_file_path)
+            cat_df,num_df = self.split_cat_num(df=df)
+
+            cat_df_transormed,onehote_encoder = self.transform_catgorical(cat_df=cat_df)
+            merged_df = pd.concat([num_df,cat_df_transormed],axis=1)
+            logging.info("onehot encoding transformed")
+
+            standardized_data, scaler = self.standardize_data(df=merged_df.drop("charges",axis=1))
+            standardized_data = np.hstack([standardized_data, np.array(merged_df['charges']).reshape(-1, 1)])
+            column_name_ls = list(merged_df.columns)
+            column_name_ls.remove('charges')
+            column_name_ls.append('charges')
+            standardized_data = pd.DataFrame(standardized_data,columns=column_name_ls)
+
+            logging.info("Robust scaler trnasormation")
+
+
+            #save onehot 
+            os.makedirs(self.data_transformation_config.onehotedata_dir,exist_ok=True)
+            os.makedirs(self.data_transformation_config.standardized_dir,exist_ok=True)
+
+            merged_df.to_csv(self.data_transformation_config.one_hot_data_file_path,index=False)
+            joblib.dump(onehote_encoder,self.data_transformation_config.onehote_encoder_model_path)
+            logging.info("saved onehot encoder data")
+
+            #save scaled
             
-        #     for col in df.select_dtypes(include=['number']).columns:
-        #         df[col] = num_imputer.fit_transform(df[[col]])
-            
-        #     for col in df.select_dtypes(include=['object', 'category']).columns:
-        #         df[col] = cat_imputer.fit_transform(df[[col]])
-   
-        print(df)
-        print("run this funtion ")
+            standardized_data.to_csv(self.data_transformation_config.scaled_data_file_path,index=False)
+            joblib.dump(scaler,self.data_transformation_config.scaler_model_path)
+            logging.info('data scaling done')
 
 
-#         # Encode categorical variables
-#         if encode_categorical:
-#             categorical_cols = df.select_dtypes(include=['object', 'category']).columns
-#             if len(categorical_cols) > 0:
-#                 encoder = OneHotEncoder(drop='first', sparse=False)
-#                 encoded_cols = encoder.fit_transform(df[categorical_cols])
-#                 df = df.drop(columns=categorical_cols)
-#                 df = pd.concat([df, pd.DataFrame(encoded_cols, columns=encoder.get_feature_names_out(categorical_cols))], axis=1)
+            data_transformation_artifact = artifact_entity.DataTransFormArtifact(
+                                onehot_data_file_path=self.data_transformation_config.one_hot_data_file_path, 
+                                onehot_encoder_model_path=self.data_transformation_config.onehote_encoder_model_path,
+                                scaler_data_file_path=self.data_transformation_config.scaled_data_file_path,
+                                scaler_model_path=self.data_transformation_config.scaler_model_path
+            )
 
-#         # Scaling
-#         scaler = StandardScaler() if scaling_method == 'standard' else MinMaxScaler()
-#         numerical_cols = df.select_dtypes(include=['number']).columns
-#         df[numerical_cols] = scaler.fit_transform(df[numerical_cols])
+            logging.info("Data tranformation Done ✅")
+            return data_transformation_artifact
 
-#         # Apply PCA if needed
-#         if apply_pca:
-#             pca = PCA(n_components=n_components)
-#             df_pca = pca.fit_transform(df)
-#             df = pd.DataFrame(df_pca, columns=[f'PC{i+1}' for i in range(n_components)])
-
-#         return df
-
-# # Example usage
-# if __name__ == "__main__":
-#     # Assume artifact_entity.DatacleaningArtifact has a valid `clean_file_path`
-#     try:
-#         datatransformation_artifact = artifact_entity.DatacleaningArtifact(clean_file_path="path_to_cleaned_data.csv")
-#         transformer = DataTransformation(datatransformation_artifact)
-#         transformed_data = transformer.transform_data(scaling_method='minmax', encode_categorical=True, impute_missing=True, apply_pca=False)
-#         print(transformed_data.head())
-#     except Exception as e:
-#         print(f"Error: {e}")
+        except Exception as e:
+            raise InsuranceException(e,sys)

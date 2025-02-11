@@ -5,11 +5,6 @@ import os,sys
 from datetime import datetime
 import pandas as pd 
 
-
-
-
-
-
 class TraningPipelineconfig:
     def __init__(self):
         
@@ -90,3 +85,20 @@ class  DataTransFormationConfig:
 
         except Exception as e:
             raise InsuranceException(e,sys)
+        
+class ModelTrainerConfig:
+    def __init__(self,traininng_pipeline_config_obj: TraningPipelineconfig):
+        try:
+            self.modeltraining_dir = os.path.join(traininng_pipeline_config_obj.artfact_dir,"Model Trainer")
+            self.trained_model_file = os.path.join(self.modeltraining_dir,"trainedmodel.lb")
+            self.standardized_trained_model_dir = os.path.join(self.modeltraining_dir,"trainedmodel_standardized_Data_withdefault_parameter")
+            self.non_standardized_trained_model_dir = os.path.join(self.modeltraining_dir,"trainedmodel_nonstandardized_Data_withdefault_parameter")
+            self.model_train_with_best_parameter = os.path.join(self.modeltraining_dir,"parameter tunned model")
+            self.model_train_with_best_parameter_standardized_model = os.path.join(self.model_train_with_best_parameter,"trained with standard data")
+            self.model_train_with_best_parameter_nonstandardized_model = os.path.join(self.model_train_with_best_parameter,"trained without standard data")
+            
+
+
+        except Exception as e:
+            raise InsuranceException(e ,sys)
+        

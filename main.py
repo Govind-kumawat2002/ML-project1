@@ -45,12 +45,6 @@ data_transormation_artifact =  data_transormation_obj.transform_initiate()
 print("Data transformation Done ✅")
 
 
-# data_transfromation_obj=DataTransformation(datatransformation_artifact=data_cleaning_obj_path)
-# data_transfromation_obj.transform_data()
-
-# data_transfromation_obj.handle_missing_values()
-
-
 
 
 

@@ -6,11 +6,6 @@ class Dataingenstionartifact:
     dataset_file_path:str
     train_file_path:str
     test_file_path:str
-# @dataclass
-# class Datacleanartifact:
-#     clean_dataset_file_path:str
-#     total_train_file_path:str
-#     total_test_file_path:str
 
 @dataclass
 class DatavalidationArtifact:
@@ -29,3 +24,13 @@ class DataTransFormArtifact:
 
     scaler_data_file_path:str 
     scaler_model_path:str 
+
+
+@dataclass
+class ModelTrainerArtifact:
+    model_dir_path_with_default_parm_standard_data:str
+    model_dir_path_with_default_parm_nonstandard_data:str
+
+    model_dir_path_tuned_model_standard_data:str
+    model_dir_path_tuned_model_nonstandard_data:str
+

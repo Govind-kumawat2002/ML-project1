@@ -5,7 +5,6 @@ from source_code.logger import logging
 from source_code.exception import InsuranceException
 from source_code.dbconfig import connect_to_mogodb
 from source_code.dbconfig import connect_to_mysql
-# from source_code.entity import
 import os 
 import sys 
 import pymongo
